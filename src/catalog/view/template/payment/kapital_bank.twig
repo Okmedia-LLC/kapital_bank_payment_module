@@ -1,0 +1,46 @@
+{% if taksit_enabled %}
+<div class="form-group checkout_shipping_details">
+    <h5 class="kapital_bank_taksit-title">Taksit</h5>
+    <select id="kapital_bank_taksit" name="kapital_bank_taksit" id="" class="form-control">
+        <option value="0">{{ text_payfull }}</option>
+        {% for taksit in taksits %}
+            <option value="{{ taksit }}">{{ taksit }} ay</option>
+        {% endfor %}
+    </select>
+</div>
+{% endif %}
+
+<div class="buttons">
+    <div class="text-end">
+        <button type="button" id="button-confirm" data-loading-text="{{ text_loading }}" class="my_confirm_button"> {{ button_confirm }} </button>
+    </div>
+</div>
+<script type="text/javascript">
+$('#button-confirm').on('click', function() {
+  $.ajax({
+    url: 'index.php?route=extension/kapital_bank/payment/kapital_bank.confirm',
+    dataType: 'json',
+    data:{
+        "kapital_bank_taksit": $('#kapital_bank_taksit').val()
+    },
+    beforeSend: function() {
+      $('#button-confirm').button('loading');
+    },
+    complete: function() {
+      $('#button-confirm').button('reset');
+    },
+    success: function(json) {
+      if (json.error){
+        console.log(json.message);
+      } else {
+        if (json.redirect) {
+          window.location = json.redirect;
+        }
+      }
+    },
+    error: function(xhr, ajaxOptions, thrownError) {
+      console.log("thrownError: "+ thrownError + "\r\n\nxhr.statusText: " + xhr.statusText + "\r\n\nxhr.responseText: " + xhr.responseText);
+    }
+  });
+});
+</script>

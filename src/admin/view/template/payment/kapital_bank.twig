@@ -1,0 +1,171 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="float-end">
+        <button type="submit" form="form-payment" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <button type="submit" form="form-payment-file" data-toggle="tooltip" title="{{ button_save_file }}" class="btn btn-primary">{{ button_save_file }}</button>
+        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-light"><i class="fa fa-reply"></i></a></div>
+      <h1>{{ heading_title }}</h1>
+      <ol class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li class="breadcrumb-item"><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ol>
+    </div>
+  </div>
+  <div class="container-fluid">
+    {% if error_warning %}
+    <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+      <button type="button" class="close btn btn-close" data-dismiss="alert"></button>
+    </div>
+    {% endif %}
+    {% if notice %}
+    <div class="alert alert-info"><i class="fa fa-exclamation-circle"></i> {{ notice }}
+    </div>
+    {% endif %}
+    <div class="card">
+      <div class="card-header">
+        <i class="fa fa-pencil"></i> {{ text_edit }}
+      </div>
+      <div class="card-body">
+          <fieldset>
+              <legend> General </legend>
+              <form action="{{ action }}" method="post" enctype="application/x-www-form-urlencoded" id="form-payment" data-oc-toggle="ajax">
+                  <div class="row mb-3 align-items-center">
+                    <label class="col-sm-2 col-form-label" for="input-status">{{ entry_status }}</label>
+                    <div class="col-sm-10">
+                        <div class="form-check form-switch form-switch-lg">
+                          <input type="hidden" name="payment_kapital_bank_status" value="0"> 
+                          <input {% if payment_kapital_bank_status %} checked="checked" {% endif %} type="checkbox" name="payment_kapital_bank_status" value="1" id="input-status" class="form-check-input">
+                        </div>
+                    </div>
+                  </div>
+        
+                  <div class="row mb-3 align-items-center">
+                    <label class="col-sm-2 col-form-label">{{ entry_test }}</label>
+                    <div class="col-sm-10">
+                        <div class="form-check form-switch form-switch-lg">
+                          <input type="hidden" name="payment_kapital_bank_test" value="0"> 
+                          <input {% if payment_kapital_bank_test %} checked="checked" {% endif %} type="checkbox" name="payment_kapital_bank_test" value="1" class="form-check-input">
+                        </div>
+                    </div>
+                  </div>
+        
+                  <div class="row mb-3 align-items-center">
+                    <label class="col-sm-2 col-form-label" for="input-merchant_id">{{ entry_merchant_id }}</span></label>
+                    <div class="col-sm-10">
+                      <input type="text" name="payment_kapital_bank_merchant_id" value="{{ payment_kapital_bank_merchant_id }}" placeholder="{{ entry_merchant_id }}" id="input-merchant_id" class="form-control" />
+                    </div>
+                  </div>
+        
+                  <div class="row mb-3 align-items-center">
+                    <label class="col-sm-2 col-form-label" for="input-taksit_check">{{ entry_taksit_check }}</span></label>
+                    <div class="col-sm-10">
+                        <div class="form-check form-switch form-switch-lg">
+                          {#<input type="hidden" name="payment_kapital_bank_taksit_check" value="0"> #}
+                          <input {% if payment_kapital_bank_taksit_check %} checked="checked" {% endif %} type="checkbox" name="payment_kapital_bank_taksit_check" value="1" id="input-status" class="form-check-input">
+                        </div>
+                    </div>
+                  </div>
+                  
+                  <div class="row mb-3 align-items-center">
+                    <label class="col-sm-2 col-form-label" for="input-taxes">{{ entry_taxes }}</span></label>
+                    <div class="col-sm-10">
+                      <input type="text" name="payment_kapital_bank_taxes" value="{{ payment_kapital_bank_taxes }}" placeholder="{{ entry_taxes }}" id="input-taxes" class="form-control" />
+                    </div>
+                  </div>
+                </form>
+          </fieldset>
+          <fieldset>
+              <legend> Files </legend>
+                <form action="{{ action_files }}" method="post" enctype="multipart/form-data" id="form-payment-file">
+                    <div class="row mb-3 align-items-center">
+                        <label class="col-sm-2 col-form-label" for="input-certificate">{{ entry_certificate }}</span></label>
+                        <div class="col-sm-10">
+                            <input type="file" name="payment_kapital_bank_certificate" value="{{ payment_kapital_bank_certificate }}" placeholder="{{ entry_certificate }}" id="input-certificate" class="custom-file-input" />
+                            {% if payment_kapital_bank_certificate %}
+                                <span>Uploaded file <b>{{ payment_kapital_bank_certificate }}</b></span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3 align-items-center">
+                        <label class="col-sm-2 col-form-label" for="input-certificate_key">{{ entry_certificate_key }}</span></label>
+                        <div class="col-sm-10">
+                            <input type="file" name="payment_kapital_bank_certificate_key" value="{{ payment_kapital_bank_certificate_key }}" placeholder="{{ entry_certificate_key }}" id="input-certificate_key" class="custom-file-input" />
+                            {% if payment_kapital_bank_certificate_key %}
+                                <span>Uploaded file <b>{{ payment_kapital_bank_certificate_key }}</b></span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </form>
+                <script>
+                    $(document).on('submit', '#form-payment-file', function (e) {
+                        e.preventDefault(); 
+                        
+                        var formData = new FormData(this);
+                        
+                        $.ajax({
+                            url: $(this).attr("action"),
+                            type: 'post',
+                            data: formData,
+                            dataType: 'json',
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            beforeSend: function() {
+                                $('#form-payment-file').find('button[type="submit"]').button('loading');
+                            },
+                            complete: function() {
+                                $('#form-payment-file').find('button[type="submit"]').button('reset');
+                            },
+                            success: function(json, textStatus) {
+                                
+                                if (json['redirect']) {
+                                    location = json['redirect'];
+                                }
+                
+                                if (typeof json['error'] == 'string') {
+                                    $('#alert').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa-solid fa-circle-exclamation"></i> ' + json['error'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+                                }
+                
+                                if (typeof json['error'] == 'object') {
+                                    if (json['error']['warning']) {
+                                        $('#alert').prepend('<dirv class="alert alert-danger alert-dismissible"><i class="fa-solid fa-circle-exclamation"></i> ' + json['error']['warning'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></dirv>');
+                                    }
+                
+                                    for (key in json['error']) {
+                                        $('#input-' + key.replaceAll('_', '-')).addClass('is-invalid').find('.form-control, .form-select, .form-check-input, .form-check-label').addClass('is-invalid');
+                                        $('#error-' + key.replaceAll('_', '-')).html(json['error'][key]).addClass('d-block');
+                                    }
+                                }
+                
+                                if (json['success']) {
+                                    $('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-circle-check"></i> ' + json['success'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+                
+                                    var url = $(this).attr('data-oc-load');
+                                    var target = $(this).attr('data-oc-target');
+                
+                                    if (url !== undefined && target !== undefined) {
+                                        $(target).load(url);
+                                    }
+                                }
+                                
+                                if (json['code']) {
+                                    $($('#form-payment-file').attr('data-oc-target')).attr('value', json['code']);
+                                }
+                            },
+                            error: function(xhr, ajaxOptions, thrownError) {
+                                console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                            }
+                        });
+                    });
+
+                </script>
+          </fieldset>
+      </div>
+    </div>
+  </div>
+</div>
+{{ footer }}
